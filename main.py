@@ -69,12 +69,29 @@ class Encoder ():
             f += bin(int(c, base=16))[2:].rjust(4, "0")
         f += trailing
         return f
+    def _generate_header (self, pid, vid, encoded, compress=True):
+        pid = bin(pid)[2:].rjust(16, "0")
+        vid = bin(vid)[2:].rjust(16, "0")
+        aln = (16-(len(encoded)%16)) % 16
+        encoded = encoded.ljust(len(encoded)+aln, "0")
+        aln = bin(aln)[2:].rjust(8, "0")
+        fdata = pid+vid+aln+encoded
+        return self._compress(fdata) if compress else fdata
+    def _unpack_data (self, cdata):
+        b = self._expand(cdata)
+        pid = int(b[:16],base=2)
+        vid = int(b[16:32],base=2)
+        tbits = int(b[32:40],base=2)
+        data = b[40:-tbits]
+        return pid, vid, data
     def _encode_bt (self, pid, vid, edata, data):
-        pass
+        encoded = ""
+        header = self._generate_header(pid, vid, encoded)
     def _decode_bt (self, pid, vid, edata, data):
         pass
     def _encode_xt (self, pid, vid, edata, data):
-        pass
+        encoded = ""
+        header = self._generate_header(pid, vid, encoded)
     def _decode_xt (self, pid, vid, edata, data):
         pass
     def encode (self, protocol, version, data):
@@ -97,3 +114,4 @@ class Encoder ():
 e = Encoder()
 comp = e._compress("00111010")
 print(comp, e._expand(comp))
+x = e._generate_header(0xa7e4, 0x2048, "101010010101")
