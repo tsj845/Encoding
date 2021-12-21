@@ -69,24 +69,30 @@ class Encoder ():
             f += bin(int(c, base=16))[2:].rjust(4, "0")
         f += trailing
         return f
-    def _encode_bt (self):
+    def _encode_bt (self, pid, vid, edata, data):
+        pass
+    def _decode_bt (self, pid, vid, edata, data):
+        pass
+    def _encode_xt (self, pid, vid, edata, data):
+        pass
+    def _decode_xt (self, pid, vid, edata, data):
         pass
     def encode (self, protocol, version, data):
         pid = self.protocols[protocol]["id"]
         vid = self.protocols[protocol]["versions"][version]
         edata = self.protocols[protocol]["data"][vid]
         if (pid == 0xadfc):
-            self._encode_bt(pid, vid, edata)
+            self._encode_bt(pid, vid, edata, data)
         elif (pid == 0xa7e4):
-            self._encode_xt(pid, vid, edata)
+            self._encode_xt(pid, vid, edata, data)
     def decode (self, protocol, version, data):
         pid = self.protocols[protocol]["id"]
         vid = self.protocols[protocol]["versions"][version]
         edata = self.protocols[protocol]["data"][vid]
         if (pid == 0xadfc):
-            self._decode_bt(pid, vid, edata)
+            self._decode_bt(pid, vid, edata, data)
         elif (pid == 0xa7e4):
-            self._decode_xt(pid, vid, edata)
+            self._decode_xt(pid, vid, edata, data)
 
 e = Encoder()
 comp = e._compress("00111010")
