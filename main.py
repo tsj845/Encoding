@@ -11,11 +11,9 @@ class BitTree ():
         self.tree = data
         self._contains = self._getcontaining(data)
         if (type(data) == str):
-            print("BOOMBAH")
             self.tree = self._construct(data)
             self._swapbottom(data)
-            print("DBP")
-            print(self.tree)
+            # print(self.tree)
     def __contains__ (self, value):
         return value in self._contains
     def has (self, char):
@@ -70,7 +68,7 @@ class BitTree ():
                 ni = (i + round(floor(len(org)/10))-5) % len(org)
             swapped += org[i]
             swapped += org[ni]
-            print(org[i], org[ni], "SWAP")
+            # print(org[i], org[ni], "SWAP")
             p1 = self.find(org[i])
             p2 = self.find(org[ni])
             h = org[ni]
@@ -89,7 +87,7 @@ class BitTree ():
         while len(f) == 1:
             f = f[0]
         f = self._swaplayers(f)
-        print(f)
+        # print(f)
         return f
     def __getitem__ (self, path):
         s = self.tree
@@ -117,13 +115,13 @@ class Encoder ():
             0xadfc : {
                 "versions" : [0x1498],
                 "data" : {
-                    0x1498 : {"tree":BitTree("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? ")}
+                    0x1498 : {"tree":BitTree("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �")}
                 }
             },
             0xa7e4 : {
                 "versions" : [0x2048],
                 "data" : {
-                    0x2048 : {"table":" abcdefghijklmnopqrstuvwxyz0123456789,.!?ABCDEFGHIJKLMNOPQRSTUVWXYZ", "width":7}
+                    0x2048 : {"table":" abcdefghijklmnopqrstuvwxyz0123456789,.!?ABCDEFGHIJKLMNOPQRSTUVWXYZ�", "width":7}
                 }
             }
         }
@@ -258,6 +256,32 @@ class Interface ():
                 if (l[1].upper() in self.conf):
                     v = self.conf[l[1].upper()]
                     print(f"\"{v}\"" if type(v) == str else v)
+    def _getcheck (self):
+        pid = self.conf["PROT"]
+        if (type(pid) == str):
+            pid = e.namemap[pid]
+        vid = e.protocols[pid]["versions"][self.conf["VERS"]
+        if (pid == 0xadfc):
+            return e.protocols[pid]["data"][vid]["tree"]
+        elif (pid == 0xa7e4):
+            return e.protocols[pid]["data"][vid]["table"]
+    def _encode_find_missing (self, inp):
+        inp = list(inp)
+        check = self._getcheck()
+        for i in range(len(inp)):
+            inp = inp[i] if inp[i] in check else "�"
+        return "".join(inp)
+    def _validate_encode (self, inp):
+        check = self._getcheck()
+        for c in inp:
+            if (inp not in check):
+                return False
+        return True
+    def _validate_decode (self, inp):
+        for c in inp:
+            if (c not in "0123456789abcdef"):
+                return False
+        return True
     def encode (self):
         while True:
             inp = input("encode> ")
@@ -265,11 +289,16 @@ class Interface ():
                 break
             if (len(inp) > 1 and inp[0] == "\\" and not inp[1] == "\\"):
                 inp = inp[1:]
+            inp = self._encode_find_missing(inp)
+            if (self._validate_encode(inp)):
+                print(e.encode(self.conf["PROT"], self.conf["VERS"], inp))
     def decode (self):
         while True:
             inp = input("decode> ")
             if (inp == "QUIT"):
                 break
+            if (self._validate_decode(inp)):
+                print(e.decode(inp))
     def interface (self):
         while True:
             inp = input("> ")
