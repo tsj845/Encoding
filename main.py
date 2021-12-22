@@ -70,11 +70,15 @@ class BitTree ():
             elif (self._swap_policy == 2):
                 ni = (i + round(floor(len(org)/10))-5) % len(org)
             elif (self._swap_policy == 3):
-                ni = (i + (round(floor((len(org)/12.5)*i))+2) * xv)
+                ni = (i + (round(floor((len(org)/12.5)*max(0.1, i*(len(org)/100))))+2) * xv)
                 xv = - xv
-                ni += len(org) if ni < 0 else 0
-                ni -= len(org) if ni >= len(org) else 0
-            print(ni)
+                # print(ni, "1")
+                while ni < 0:
+                    ni += len(org)
+                # print(ni, "2")
+                while ni >= len(org):
+                    ni -= len(org)
+                # print(ni, "3")
             swapped += org[i]
             swapped += org[ni]
             print(org[i], org[ni], "SWAP")
@@ -221,8 +225,8 @@ class Encoder ():
         return res
 
 e = Encoder()
-comp = e._compress("00111010")
-print(comp, e._expand(comp))
+# comp = e._compress("00111010")
+# print(comp, e._expand(comp))
 x = e.protocols[0xadfc]["data"][0x1498]["tree"]
 # x = e._generate_header(0xa7e4, 0x2048, "101010010101")
 
