@@ -1,4 +1,5 @@
 from numpy import floor
+from sys import argv as script_args
 
 class BitTree ():
     """
@@ -8,12 +9,24 @@ class BitTree ():
         # use this to configure how final swaps are done
         self._swap_policy = 1
         self.tree = data
+        self._contains = self._getcontaining(data)
         if (type(data) == str):
             print("BOOMBAH")
             self.tree = self._construct(data)
             self._swapbottom(data)
             print("DBP")
             print(self.tree)
+    def __contains__ (self, value):
+        return value in self._contains
+    def has (self, char):
+        return char in self._contains
+    def _getcontaining (self, data):
+        if (type(data) == str):
+            return data
+        f = ""
+        for i in range(len(data)):
+            f += self._getcontaining(data[i])
+        return f
     def _fit (self, tree, char):
         for i in range(len(tree)):
             if (type(tree[i]) != str):
@@ -205,3 +218,72 @@ comp = e._compress("00111010")
 print(comp, e._expand(comp))
 x = e.protocols[0xadfc]["data"][0x1498]["tree"]
 # x = e._generate_header(0xa7e4, 0x2048, "101010010101")
+
+class Interface ():
+    def __init__ (self):
+        self.conf = {
+            "PROT" : 0xadfc,
+            "VERS" : 0,
+        }
+        self.hd = {
+            "topics" : "config, encode, decode",
+            "config" : "type \"get\" [name] to get config value\ntype \"set\" [name] [value] to set config value",
+        }
+        self.interface()
+    def help (self):
+        print("type \"QUIT\" to quit, and \"topics\" for a list of help topics")
+        while True:
+            inp = input("help> ")
+            if (inp == "QUIT"):
+                break
+            if (inp in self.hd):
+                print(self.hd[inp])
+    def _parse (self, value):
+        if (value.startswith("0x") and value[2:].isdigit()):
+            return int(value, base=16)
+        elif (value.isdigit()):
+            return int(value)
+        return value
+    def config (self):
+        while True:
+            inp = input("config> ")
+            if (inp == "QUIT"):
+                break
+            if (inp.startswith("set")):
+                l = inp.split(" ", 2)
+                if (l[1].upper() in self.conf):
+                    self.conf[l[1].upper()] = self._parse(l[2])
+            elif (inp.startswith("get")):
+                l = inp.split(" ", 1)
+                if (l[1].upper() in self.conf):
+                    v = self.conf[l[1].upper()]
+                    print(f"\"{v}\"" if type(v) == str else v)
+    def encode (self):
+        while True:
+            inp = input("encode> ")
+            if (inp == "QUIT"):
+                break
+            if (len(inp) > 1 and inp[0] == "\\" and not inp[1] == "\\"):
+                inp = inp[1:]
+    def decode (self):
+        while True:
+            inp = input("decode> ")
+            if (inp == "QUIT"):
+                break
+    def interface (self):
+        while True:
+            inp = input("> ")
+            if (inp == "QUIT"):
+                break
+            if (inp == "help"):
+                self.help()
+            if (inp == "config"):
+                self.config()
+            if (inp == "encode"):
+                self.encode()
+            if (inp == "decode"):
+                self.decode()
+
+if (len(script_args) > 1):
+    if (script_args[1] == "-i"):
+        Interface()
