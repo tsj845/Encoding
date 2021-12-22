@@ -5,16 +5,16 @@ class BitTree ():
     """
     tree that maps bits to characters
     """
-    def __init__ (self, data):
+    def __init__ (self, data, policy=2):
         # use this to configure how final swaps are done
-        self._swap_policy = 3
+        self._swap_policy = policy
         self.tree = data
         self._contains = self._getcontaining(data)
         if (type(data) == str):
-            print("BOOMBAH")
+            # print("BOOMBAH")
             self.tree = self._construct(data)
             self._swapbottom(data)
-            print("DBP")
+            # print("DBP")
             print(self.tree)
     def __contains__ (self, value):
         return value in self._contains
@@ -81,7 +81,7 @@ class BitTree ():
                 # print(ni, "3")
             swapped += org[i]
             swapped += org[ni]
-            print(org[i], org[ni], "SWAP")
+            # print(org[i], org[ni], "SWAP")
             p1 = self.find(org[i])
             p2 = self.find(org[ni])
             h = org[ni]
@@ -100,7 +100,7 @@ class BitTree ():
         while len(f) == 1:
             f = f[0]
         f = self._swaplayers(f)
-        print(f)
+        # print(f)
         return f
     def __getitem__ (self, path):
         s = self.tree
