@@ -7,7 +7,7 @@ class BitTree ():
     """
     def __init__ (self, data):
         # use this to configure how final swaps are done
-        self._swap_policy = 1
+        self._swap_policy = 3
         self.tree = data
         self._contains = self._getcontaining(data)
         if (type(data) == str):
@@ -58,8 +58,9 @@ class BitTree ():
         return self._swap(lst)
     def _swapbottom (self, org):
         swapped = ""
+        xv = 1
         for i in range(0, len(org), 2):
-            if (org[i] in swapped):
+            if (org[i] in swapped and self._swap_policy < 3):
                 continue
             ni = (i + 1) % len(org)
             if (self._swap_policy == 0):
@@ -68,6 +69,12 @@ class BitTree ():
                 ni = (i + len(org) // 2) % len(org)
             elif (self._swap_policy == 2):
                 ni = (i + round(floor(len(org)/10))-5) % len(org)
+            elif (self._swap_policy == 3):
+                ni = (i + (round(floor((len(org)/12.5)*i))+2) * xv)
+                xv = - xv
+                ni += len(org) if ni < 0 else 0
+                ni -= len(org) if ni >= len(org) else 0
+            print(ni)
             swapped += org[i]
             swapped += org[ni]
             print(org[i], org[ni], "SWAP")
