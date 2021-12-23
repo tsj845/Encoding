@@ -270,7 +270,7 @@ class Interface ():
     def _validate_encode (self, inp):
         check = self._getcheck()
         for c in inp:
-            if (inp not in check):
+            if (c not in check):
                 return False
         return True
     def _validate_decode (self, inp):
@@ -288,6 +288,8 @@ class Interface ():
             inp = self._encode_find_missing(inp)
             if (self._validate_encode(inp)):
                 print(e.encode(self.conf["PROT"], self.conf["VERS"], inp))
+            else:
+                print("BOGUS")
     def decode (self):
         while True:
             inp = input("decode> ")
