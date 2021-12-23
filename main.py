@@ -132,15 +132,11 @@ class Encoder ():
         f = ""
         for i in range(0, len(data), 4):
             f += hex(int(data[i:i+4], base=2))[2:]
-        f += ";" + trailing
         return f
     def _expand (self, data):
-        trailing = data[data.index(";")+1:]
-        data = data[:data.index(";")]
         f = ""
         for c in data:
             f += bin(int(c, base=16))[2:].rjust(4, "0")
-        f += trailing
         return f
     def _generate_header (self, pid, vid, encoded, compress=True):
         pid = bin(pid)[2:].rjust(16, "0")
@@ -237,7 +233,7 @@ class Interface ():
             if (inp in self.hd):
                 print(self.hd[inp])
     def _parse (self, value):
-        if (value.startswith("0x") and value[2:].isdigit()):
+        if (value.startswith("0x")):
             return int(value, base=16)
         elif (value.isdigit()):
             return int(value)
@@ -260,7 +256,7 @@ class Interface ():
         pid = self.conf["PROT"]
         if (type(pid) == str):
             pid = e.namemap[pid]
-        vid = e.protocols[pid]["versions"][self.conf["VERS"]
+        vid = e.protocols[pid]["versions"][self.conf["VERS"]]
         if (pid == 0xadfc):
             return e.protocols[pid]["data"][vid]["tree"]
         elif (pid == 0xa7e4):
@@ -269,7 +265,7 @@ class Interface ():
         inp = list(inp)
         check = self._getcheck()
         for i in range(len(inp)):
-            inp = inp[i] if inp[i] in check else "�"
+            inp[i] = inp[i] if inp[i] in check else "�"
         return "".join(inp)
     def _validate_encode (self, inp):
         check = self._getcheck()
