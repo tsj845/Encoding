@@ -1,7 +1,6 @@
 package encoder;
 import java.util.ArrayList;
 public class Tree {
-	private static final Tree demoObsolete = new Tree("@@@@@@@@@@@@@@@@@@@@@@@@. etaoin@@@@@@@@wculdrhs@@@@@@@@@@@@@@@@@@@,zqxjkvbpgyfm", false, true);
 	public final String charTree;
 	public final boolean upperReq;
 	public final boolean lowerReq;
@@ -12,32 +11,6 @@ public class Tree {
 		this.charTree = charTree;
 		this.upperReq = upperReq;
 		this.lowerReq = lowerReq;
-	}
-	public static void demo(String[] arg) {
-		Tree demoTree = demoObsolete;
-		System.out.println("array used: " + demoTree.bitTreeAsJSONArray());
-		if (arg.length < 2) {
-			System.out.println("invalid syntax");
-			System.exit(2);
-		}
-		arg[0] = arg[0].toLowerCase();
-		if (arg[0].equals("enc")) {
-			System.out.println("text: {\"" + arg[1] + "\"} ");
-			System.out.println("encoded: {\"0x" + demoTree.encodeToHex(arg[1]) + "\"} ");
-		}
-		else if (arg[0].equals("dec")) {
-			arg[1] = arg[1].toLowerCase();
-			if (arg[1].substring(0, 2).equals("0x")) {
-				arg[1] = arg[1].substring(2);
-			}
-			System.out.println("hex: {\"0x" + arg[1] + "\"} ");
-			System.out.println("decoded: {\"" + demoTree.decodeHex(arg[1]) + "\"} ");
-		}
-		else {
-			System.out.println("invalid operation");
-			System.exit(3);
-		}
-		System.exit(0);
 	}
 	public static String JSONToBitTreeString(String arrayString) {
 		int place;
