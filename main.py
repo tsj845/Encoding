@@ -222,6 +222,8 @@ class Interface ():
         self.hd = {
             "topics" : "config, encode, decode",
             "config" : "type \"get\" [name] to get config value\ntype \"set\" [name] [value] to set config value",
+            "encode" : "type \"encode\" to enter the encoder, type text to encode and it will be encoded using the settings set in the \"config\" interface, type \"\\QUIT\" when encoding \"QUIT\"",
+            "decode" : "type \"decode\" to enter the decoder, type encoded values to decode them, type \"QUIT\" to return to the main interface, config settings don't matter"
         }
         self.interface()
     def help (self):
