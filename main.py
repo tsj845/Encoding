@@ -58,7 +58,7 @@ class BitTree ():
         swapped = ""
         xv = 1
         for i in range(0, len(org), 2):
-            if (org[i] in swapped):
+            if (org[i] in swapped and self._swap_policy < 3):
                 continue
             ni = (i + 1) % len(org)
             if (self._swap_policy == 0):
@@ -152,7 +152,7 @@ class Encoder ():
         aln = (16-(len(encoded)%16)) % 16
         encoded = encoded.ljust(len(encoded)+aln, "0")
         aln = bin(aln)[2:].rjust(4 if usenib else 8, "0")
-        nib = pnib
+        nib = bin(pnib)[2:].rjust(4, "0") if usenib else ""
         fdata = pid+vid+nib+aln+encoded
         return self._compress(fdata) if compress else fdata
     def _unpack_data (self, cdata):
@@ -172,7 +172,7 @@ class Encoder ():
             encoded += p
         header = self._generate_header(pid, vid, encoded, usenib=True, pnib=edata["nib"])
         return header
-    def _decode_bt (self, edata, datam, nib):
+    def _decode_bt (self, edata, data, nib):
         tree = BitTree(edata["tree"], nib)
         f = ""
         work = tree
