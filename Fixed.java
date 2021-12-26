@@ -23,7 +23,7 @@ public class Fixed {
 			sig = null;
 		}
 		else if ((pid > 65535 || pid < 0) || (vid > 65535 || vid < 0)) {
-			System.out.println("pid and / or vid not representable in 16 bits");
+			System.out.println("pid and / or vid not representable in unsigned 16 bits");
 			base = null;
 			sig = null;
 		}

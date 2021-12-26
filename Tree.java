@@ -13,6 +13,7 @@ public class Tree {
 		this.lowerReq = lowerReq;
 	}
 	public static String JSONToBitTreeString(String arrayString) {
+		arrayString = "[" + arrayString + "]";
 		int place;
 		int id;
 		char tc;
@@ -69,7 +70,8 @@ public class Tree {
 		return (new String(output));
 	}
 	public String bitTreeAsJSONArray() {
-		return search(1) + " ";
+		String ts = search(1);
+		return ts.substring(1, ts.length() - 1) + " ";
 	}
 	private String search(int place) {
 		if (place > (charTree.length() - 1)) {
