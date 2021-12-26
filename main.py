@@ -56,6 +56,7 @@ class BitTree ():
         return self._swap(lst)
     def _swapbottom (self, org):
         swapped = ""
+        xv = 1
         for i in range(0, len(org), 2):
             if (org[i] in swapped):
                 continue
