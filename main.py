@@ -66,6 +66,13 @@ class BitTree ():
                 ni = (i + len(org) // 2) % len(org)
             elif (self._swap_policy == 2):
                 ni = (i + round(floor(len(org)/10))-5) % len(org)
+            elif (self._swap_policy == 3):
+                ni = (i + (round(floor((len(org)/12.5)*max(0.1, i*(len(org)/100))))+2) * xv)
+                xv = - xv
+                while ni < 0:
+                    ni += len(org)
+                while ni >= len(org):
+                    ni -= len(org)
             swapped += org[i]
             swapped += org[ni]
             # print(org[i], org[ni], "SWAP")
