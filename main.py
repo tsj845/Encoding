@@ -5,9 +5,9 @@ class BitTree ():
     """
     tree that maps bits to characters
     """
-    def __init__ (self, data):
+    def __init__ (self, data, swap_policy=2):
         # use this to configure how final swaps are done
-        self._swap_policy = 1
+        self._swap_policy = swap_policy
         self.tree = data
         self._contains = self._getcontaining(data)
         if (type(data) == str):
@@ -122,7 +122,7 @@ class Encoder ():
             0xadfc : {
                 "versions" : [0x1498],
                 "data" : {
-                    0x1498 : {"tree":BitTree("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �")}
+                    0x1498 : {"tree":"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �","nib":2,"nibd":2}
                 }
             },
             0xa7e4 : {
@@ -134,7 +134,7 @@ class Encoder ():
         }
         self.namemap = {"bittree":0xadfc, "hextables":0xa7e4}
     def _compress (self, data):
-        trailing = data[len(data)-(len(data)%4):]
+        # trailing = data[len(data)-(len(data)%4):]
         data = data[:len(data)-(len(data)%4)]
         f = ""
         for i in range(0, len(data), 4):
@@ -145,32 +145,34 @@ class Encoder ():
         for c in data:
             f += bin(int(c, base=16))[2:].rjust(4, "0")
         return f
-    def _generate_header (self, pid, vid, encoded, compress=True):
+    def _generate_header (self, pid, vid, encoded, compress=True, usenib=False, pnib=""):
         pid = bin(pid)[2:].rjust(16, "0")
         vid = bin(vid)[2:].rjust(16, "0")
         aln = (16-(len(encoded)%16)) % 16
         encoded = encoded.ljust(len(encoded)+aln, "0")
-        aln = bin(aln)[2:].rjust(8, "0")
-        fdata = pid+vid+aln+encoded
+        aln = bin(aln)[2:].rjust(4 if usenib else 8, "0")
+        nib = pnib
+        fdata = pid+vid+nib+aln+encoded
         return self._compress(fdata) if compress else fdata
     def _unpack_data (self, cdata):
         b = self._expand(cdata)
         pid = int(b[:16],base=2)
         vid = int(b[16:32],base=2)
-        tbits = int(b[32:40],base=2)
+        nib = int(b[32:36],base=2)
+        tbits = int(b[36:40],base=2)
         data = b[40:-tbits]
-        return pid, vid, data
+        return pid, vid, data, nib
     def _encode_bt (self, pid, vid, edata, data):
-        tree = edata["tree"]
+        tree = BitTree(edata["tree"], edata["nib"])
         encoded = ""
         for c in data:
             p = tree.find(c)
             print(p, c)
             encoded += p
-        header = self._generate_header(pid, vid, encoded)
+        header = self._generate_header(pid, vid, encoded, usenib=True, pnib=edata["nib"])
         return header
-    def _decode_bt (self, edata, data):
-        tree = edata["tree"]
+    def _decode_bt (self, edata, datam, nib):
+        tree = BitTree(edata["tree"], nib)
         f = ""
         work = tree
         for c in data:
@@ -205,11 +207,11 @@ class Encoder ():
             res = self._encode_xt(pid, vid, edata, data)
         return res
     def decode (self, data):
-        pid, vid, data = self._unpack_data(data)
+        pid, vid, data, nib = self._unpack_data(data)
         edata = self.protocols[pid]["data"][vid]
         res = "NULL"
         if (pid == 0xadfc):
-            res = self._decode_bt(edata, data)
+            res = self._decode_bt(edata, data, nib)
         elif (pid == 0xa7e4):
             res = self._decode_xt(edata, data)
         return res
@@ -225,6 +227,7 @@ class Interface ():
         self.conf = {
             "PROT" : 0xadfc,
             "VERS" : 0,
+            "NIB" : 2,
         }
         self.hd = {
             "topics" : "config, encode, decode",
@@ -256,6 +259,8 @@ class Interface ():
                 l = inp.split(" ", 2)
                 if (l[1].upper() in self.conf):
                     self.conf[l[1].upper()] = self._parse(l[2])
+                    if (l[1].upper() == "PROT"):
+                        self.conf["NIB"] = e.protocols[0xadfc]["data"][e.protocols[0xadfc]["versions"][0]]["nibd"]
             elif (inp.startswith("get")):
                 l = inp.split(" ", 1)
                 if (l[1].upper() in self.conf):
@@ -296,6 +301,9 @@ class Interface ():
                 inp = inp[1:]
             inp = self._encode_find_missing(inp)
             if (self._validate_encode(inp)):
+                prot = e.protocols[self.conf["PROT"]]
+                prot = prot["data"][prot["versions"][self.conf["VERS"]]]
+                prot["nib"] = self.conf["NIB"]
                 print(e.encode(self.conf["PROT"], self.conf["VERS"], inp))
             else:
                 print("BOGUS")
