@@ -219,7 +219,7 @@ class Encoder ():
 
 e = Encoder()
 comp = e._compress("00111010")
-print(comp, e._expand(comp))
+# print(comp, e._expand(comp))
 x = e.protocols[0xadfc]["data"][0x1498]["tree"]
 # x = e._generate_header(0xa7e4, 0x2048, "101010010101")
 
@@ -266,7 +266,7 @@ class Interface ():
                 l = inp.split(" ", 1)
                 if (l[1].upper() in self.conf):
                     v = self.conf[l[1].upper()]
-                    print(f"\"{v}\"" if type(v) == str else v)
+                    print(hex(v) if l[1].upper() == "PROT" else f"\"{v}\"" if type(v) == str else v)
     def _getcheck (self):
         pid = self.conf["PROT"]
         if (type(pid) == str):
