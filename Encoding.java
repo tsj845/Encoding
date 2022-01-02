@@ -124,6 +124,9 @@ class Tree {
 				ti = 1;
 			}
 		}
+		if (ti != 1) {
+			result.append('�');
+		}
 		return result.toString();
 	}
 	public String encodeToHex(String mess) {
