@@ -1,4 +1,6 @@
 package encoder;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 class Tree {
 	public final String charTree;
@@ -86,14 +88,8 @@ class Tree {
 		return "[" + search((place * 2)) + "," + search(((place * 2) + 1)) + "]";
 	}
 	public String decodeHex(String data) {
-		if (data.substring(0, 2).equals("0x")) {
-			data = data.substring(2);
-		}
 		ArrayList<Byte> tb = new ArrayList<Byte>();
 		int si;
-		if (data.length() % 2 > 0) {
-			data += "0";
-		}
 		for (int s = 0; s < (data.length() / 2); s++) {
 			si = Integer.valueOf(data.substring((s * 2), (s * 2) + 2), 16);
 			if (si > -1) {
@@ -113,7 +109,7 @@ class Tree {
 		byte sb;
 		int ti = 1;
 		StringBuilder result = new StringBuilder();
-		for (long s = 0; s < (((data.length - 1) * 8) - data[0]); s++) {
+		for (long s = 0; s < (((data.length - 1) * 8) - ((data[0] + 128) % 16)); s++) {
 			sb = data[((int) (s / 8)) + 1];
 			ti *= 2;
 			if ((sb & (1 << (7 - (s % 8)))) > 0) {
@@ -121,6 +117,7 @@ class Tree {
 			}
 			if (ti > charTree.length()) {
 				ti = 1;
+				result.append('�');
 			}
 			else if (!(charTree.charAt(ti) == '@')) {
 				result.append(charTree.charAt(ti));
@@ -160,8 +157,7 @@ class Tree {
 		for (int i = 0; i < mess.length(); i++) {
 			index = (short) charTree.indexOf(mess.charAt(i));
 			if (index == -1 || mess.charAt(i) == '@') {
-				System.out.println("illegal character");
-				return new byte[0];
+				index = (short) charTree.indexOf('�');
 			}
 			power = (byte) Math.floor(Math.log(index) / Math.log(2));
 			index -= 1 << power;
@@ -200,28 +196,56 @@ class Tree {
 	}
 }
 class BitTree {
-	public static final BitTree a001_115d = new BitTree(0xa001, 0x115d, "@@@@@@@@@@@@@@@@@@@@@@@@. etaoin@@@@@@@@wculdrhs@@@@@@@@@@@@@@@@@@@,zqxjkvbpgyfm", false, true);
+	public static final BitTree a001_115d = new BitTree(0xa001, 0x115d, "@@@@@@@@@@@@@@@@@@@@@@@@. etaoin@@@@@@@@wculdrhs@@@@@@@@@@@@@@@@@@�,zqxjkvbpgyfm", false, true);
 	public static final BitTree adfc_1498_0 = new BitTree(0xadfc, 0x1498, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �", 0, false, false);
 	public static final BitTree adfc_1498_1 = new BitTree(0xadfc, 0x1498, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �", 1, false, false);
 	public static final BitTree adfc_1498_2 = new BitTree(0xadfc, 0x1498, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �", 2, false, false);
 	public static final BitTree adfc_1498_3 = new BitTree(0xadfc, 0x1498, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �", 3, false, false);
+	public static final BitTree adfc_1498_4 = new BitTree(0xadfc, 0x1498, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �", 4, false, false);
+	public static final BitTree adfc_1498_5 = new BitTree(0xadfc, 0x1498, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �", 5, false, false);
+	public static final BitTree adfc_1498_6 = new BitTree(0xadfc, 0x1498, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �", 6, false, false);
+	public static final BitTree adfc_1498_7 = new BitTree(0xadfc, 0x1498, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �", 7, false, false);
+	public static final BitTree adfc_1498_8 = new BitTree(0xadfc, 0x1498, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �", 8, false, false);
+	public static final BitTree adfc_1498_9 = new BitTree(0xadfc, 0x1498, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �", 9, false, false);
+	public static final BitTree adfc_1498_10 = new BitTree(0xadfc, 0x1498, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �", 10, false, false);
+	public static final BitTree adfc_1498_11 = new BitTree(0xadfc, 0x1498, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �", 11, false, false);
+	public static final BitTree adfc_1498_12 = new BitTree(0xadfc, 0x1498, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �", 12, false, false);
+	public static final BitTree adfc_1498_13 = new BitTree(0xadfc, 0x1498, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �", 13, false, false);
+	public static final BitTree adfc_1498_14 = new BitTree(0xadfc, 0x1498, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �", 14, false, false);
+	public static final BitTree adfc_1498_15 = new BitTree(0xadfc, 0x1498, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �", 15, false, false);
 	public short pid;
 	public short vid;
 	public Tree base;
 	public String sig;
+	public boolean useSwapPolicy;
+	public byte swapNum;
+	public char swapChar;
 	public BitTree(int pid, int vid, String chars, int swapPolicy, boolean upperReq, boolean lowerReq) {
 		//uses a String of supported characters and a swap policy, compatible with the Python code
-		if (chars.contains("@")) {
-			System.out.println("illegal character: '@'");
+		if (!chars.contains("�")) {
+			System.out.println("critical error: specification does not include a replacement character");
+			base = null;
+			sig = null;
+		}
+		else if (swapPolicy < 0 || swapPolicy > 15) {
+			System.out.println("critical error: invalid swapPolicy value");
+			base = null;
+			sig = null;
+		}
+		else if (chars.contains("@")) {
+			System.out.println("critical error: illegal character: '@'");
 			base = null;
 			sig = null;
 		}
 		else if ((pid > 65535 || pid < 0) || (vid > 65535 || vid < 0)) {
-			System.out.println("pid and / or vid not representable in unsigned 16 bits");
+			System.out.println("critical error: pid and / or vid not representable in unsigned 16 bits");
 			base = null;
 			sig = null;
 		}
 		else {
+			swapNum = (byte) swapPolicy;
+			swapChar = Integer.toHexString(swapPolicy).charAt(0);
+			useSwapPolicy = true;
 			this.sig = Tree.getSig(pid, vid);
 			if (pid > 32767) {
 				pid -= 65536;
@@ -274,12 +298,20 @@ class BitTree {
 	}
 	public BitTree(int pid, int vid, String charTree, boolean upperReq, boolean lowerReq) {
 		//uses a String which makes the tree when wrapped into a triangle with layers twice as long each layer down, starting with index 1 at apex / root (index 0 disregarded), must not have index 1 as a valid character, invalid / blank spaces represented with '@'
-		if ((pid > 65535 || pid < 0) || (vid > 65535 || vid < 0)) {
-			System.out.println("pid and / or vid not representable in 16 bits");
+		if (!charTree.contains("�")) {
+			System.out.println("critical error: specification does not include a replacement character");
+			base = null;
+			sig = null;
+		}
+		else if ((pid > 65535 || pid < 0) || (vid > 65535 || vid < 0)) {
+			System.out.println("critical error: pid and / or vid not representable in 16 bits");
 			base = null;
 			sig = null;
 		}
 		else {
+			swapNum = 0;
+			swapChar = '0';
+			useSwapPolicy = false;
 			this.sig = Tree.getSig(pid, vid);
 			if (pid > 32767) {
 				pid -= 65536;
@@ -382,12 +414,13 @@ class BitTree {
 	}
 	private static final String swapBottom(String charTree, String chars, int swapPolicy) {
 		String swapped = "";
+		byte xv = 1;
 		StringBuilder swap = new StringBuilder(charTree);
 		int ni;
 		int tpos;
 		int tpos2;
 		for (int i = 0; i < chars.length(); i += 2) {
-            if (swapped.contains(chars.substring(i, i + 1))) {
+            if (swapped.contains(chars.substring(i, i + 1)) && swapPolicy < 3) {
             	continue;
             }
             ni = (i + 1) % chars.length();
@@ -400,6 +433,16 @@ class BitTree {
             else if (swapPolicy == 2) {
                 ni = (i + (chars.length() / 10) - 5) % chars.length();
             }
+            else if (swapPolicy == 3) {
+            	ni = (int) (i + (int) (Math.floor((chars.length() / 12.5) * Math.max(0.1, i * (chars.length() / 100d))) + 2) * xv);
+            	xv = (byte) -xv;
+            	while (ni < 0) {
+            		ni += chars.length();
+            	}
+            	while (ni >= chars.length()) {
+            		ni -= chars.length();
+            	}
+            }
             swapped += chars.substring(i, i + 1);
             swapped += chars.substring(ni, ni + 1);
             tpos = swap.toString().indexOf(chars.charAt(i));
@@ -409,8 +452,16 @@ class BitTree {
 		}
 		return swap.toString();
 	}
+	public String ncode(boolean decode, String input) {
+		if (decode) {
+			return decode(input);
+		}
+		else {
+			return encode(input);
+		}
+	}
 	public String encode(String message) {
-		return sig + base.encodeToHex(message);
+		return "0x" + sig + swapChar + base.encodeToHex(message).substring(1);
 	}
 	public String decode(String data) {
 		if (data.substring(0, 2).equals("0x")) {
@@ -436,17 +487,22 @@ class Fixed {
 		this.chars = chars;
 		this.offset = offset;
 		if ((1 << width) < (chars.length() + offset)) {
-			System.out.println("character count plus offset greater than width allows");
+			System.out.println("critical error: character count plus offset greater than width allows");
+			base = null;
+			sig = null;
+		}
+		else if (!chars.contains("�")) {
+			System.out.println("critical error: specification does not include a replacement character");
 			base = null;
 			sig = null;
 		}
 		else if (chars.contains("@")) {
-			System.out.println("illegal character: '@'");
+			System.out.println("critical error: illegal character: '@'");
 			base = null;
 			sig = null;
 		}
 		else if ((pid > 65535 || pid < 0) || (vid > 65535 || vid < 0)) {
-			System.out.println("pid and / or vid not representable in unsigned 16 bits");
+			System.out.println("critical error: pid and / or vid not representable in unsigned 16 bits");
 			base = null;
 			sig = null;
 		}
@@ -473,8 +529,16 @@ class Fixed {
 			base = new Tree(treeString.toString(), upperReq, lowerReq);
 		}
 	}
+	public String ncode(boolean decode, String input) {
+		if (decode) {
+			return decode(input);
+		}
+		else {
+			return encode(input);
+		}
+	}
 	public String encode(String message) {
-		return sig + base.encodeToHex(message);
+		return "0x" + sig + base.encodeToHex(message);
 	}
 	public String decode(String data) {
 		if (data.substring(0, 2).equals("0x")) {
@@ -484,5 +548,216 @@ class Fixed {
 			return null;
 		}
 		return base.decodeHex(data.substring(8));
+	}
+}
+class Manifest {
+	short amount;
+	public int[] pids;
+	public int[] vids;
+	public String[] sigs;
+	public byte[] types;
+	public boolean[] useSwapPolicy;
+	public Fixed[] fixeds;
+	public BitTree[] bitTree0;
+	public BitTree[] bitTree1;
+	public BitTree[] bitTree2;
+	public BitTree[] bitTree3;
+	public BitTree[] bitTree4;
+	public BitTree[] bitTree5;
+	public BitTree[] bitTree6;
+	public BitTree[] bitTree7;
+	public BitTree[] bitTree8;
+	public BitTree[] bitTree9;
+	public BitTree[] bitTree10;
+	public BitTree[] bitTree11;
+	public BitTree[] bitTree12;
+	public BitTree[] bitTree13;
+	public BitTree[] bitTree14;
+	public BitTree[] bitTree15;
+	static Manifest manifest1 = new Manifest((short) 3, new int[]{0xa001, 0xadfc, 0xa7e4}, new int[]{0x115d, 0x1498, 0x2048}, new String[]{"a001115d", "adfc1498", "a7e42048"}, new byte[]{0, 0, 1}, new boolean[]{false, true, false}, new Fixed[]{null, null, Fixed.a7e4_2048}, new BitTree[]{BitTree.a001_115d, BitTree.adfc_1498_0, null}, new BitTree[]{null, BitTree.adfc_1498_1, null}, new BitTree[]{null, BitTree.adfc_1498_2, null}, new BitTree[]{null, BitTree.adfc_1498_3, null}, new BitTree[]{null, BitTree.adfc_1498_4, null}, new BitTree[]{null, BitTree.adfc_1498_5, null}, new BitTree[]{null, BitTree.adfc_1498_6, null}, new BitTree[]{null, BitTree.adfc_1498_7, null}, new BitTree[]{null, BitTree.adfc_1498_8, null}, new BitTree[]{null, BitTree.adfc_1498_9, null}, new BitTree[]{null, BitTree.adfc_1498_10, null}, new BitTree[]{null, BitTree.adfc_1498_11, null}, new BitTree[]{null, BitTree.adfc_1498_12, null}, new BitTree[]{null, BitTree.adfc_1498_13, null}, new BitTree[]{null, BitTree.adfc_1498_14, null}, new BitTree[]{null, BitTree.adfc_1498_15, null});
+	Manifest(short size, int[] pids, int[] vids, String[] sigs, byte[] types, boolean[] useSwapPolicy, Fixed[] fixed, BitTree[] bitTree0, BitTree[] bitTree1, BitTree[] bitTree2, BitTree[] bitTree3, BitTree[] bitTree4, BitTree[] bitTree5, BitTree[] bitTree6, BitTree[] bitTree7, BitTree[] bitTree8, BitTree[] bitTree9, BitTree[] bitTree10, BitTree[] bitTree11, BitTree[] bitTree12, BitTree[] bitTree13, BitTree[] bitTree14, BitTree[] bitTree15) {
+		amount = size;
+		this.pids = pids;
+		this.vids = vids;
+		this.sigs = sigs;
+		this.types = types;
+		this.useSwapPolicy = useSwapPolicy;
+		fixeds = fixed;
+		this.bitTree0 = bitTree0;
+		this.bitTree1 = bitTree1;
+		this.bitTree2 = bitTree2;
+		this.bitTree3 = bitTree3;
+		this.bitTree4 = bitTree4;
+		this.bitTree5 = bitTree5;
+		this.bitTree6 = bitTree6;
+		this.bitTree7 = bitTree7;
+		this.bitTree8 = bitTree8;
+		this.bitTree9 = bitTree9;
+		this.bitTree10 = bitTree10;
+		this.bitTree11 = bitTree11;
+		this.bitTree12 = bitTree12;
+		this.bitTree13 = bitTree13;
+		this.bitTree14 = bitTree14;
+		this.bitTree15 = bitTree15;
+	}
+}
+class CLI {
+	public static void main(String[] arg) throws Exception {
+		System.out.println("Starting CLI...");
+		CL();
+		System.out.println("Closing program...");
+		System.exit(0);
+	}
+	static void CL() throws Exception {
+		boolean tbool;
+		short ts;
+		String tstr;
+		String input;
+		String input2;
+		String[] inputs;
+		BufferedReader inRead = new BufferedReader(new InputStreamReader(System.in));
+		while (true) {
+			System.out.print(">");
+			input = inRead.readLine();
+			inputs = input.split(" ");
+			if (input.toLowerCase().equals("quit")) {
+				System.out.println("Closing CLI...");
+				return;
+			}
+			else if (input.toLowerCase().equals("help")) {
+				System.out.println("commands:\r\nenc <pid> <vid> <text> - Encodes text\r\ndec <hex>  - Decodes hex\r\nhelp                   - Displays available commands\r\nencodings              - Displays availavle encodings\r\nquit                   - Closes the program");
+			}
+			else if (input.toLowerCase().equals("encodings")) {
+				for (short s = 0; s < Manifest.manifest1.amount; s++) {
+					System.out.print((new StringBuilder(Manifest.manifest1.sigs[s])).insert(4, "-") + ", ");
+					if (Manifest.manifest1.types[s] == 0) {
+						System.out.print("bit tree, ");
+						if (Manifest.manifest1.useSwapPolicy[s]) {
+							System.out.println("useSwapPolicy = true");
+						}
+						else {
+							System.out.println("useSwapPolicy = false");
+						}
+					}
+					else {
+						System.out.println("fixed-length");
+					}
+				}
+			}
+			else if (inputs.length > 0 && ((inputs[0].toLowerCase().equals("enc")) || (inputs[0].toLowerCase().equals("dec")))) {
+				inputs[0] = inputs[0].toLowerCase();
+				tbool = inputs[0].equals("dec");
+				if (tbool) {
+					if (inputs[1].length() > 1 && inputs[1].substring(0, 2).equals("0x")) {
+						inputs[1] = inputs[1].substring(2);
+					}
+					if (inputs[1].length() > 10) {
+						inputs = new String[]{"dec", inputs[1].substring(0,4), inputs[1].substring(4, 8), inputs[1]};
+						tstr = "";
+						for (String s : inputs) {
+							tstr += (" " + s);
+						}
+						tstr = tstr.substring(1);
+						input = tstr;
+					}
+					else {
+						System.out.println("error: header and padding data not completely-present");
+						inputs = new String[]{"dec"};
+					}
+				}
+				if (inputs.length < 3 && !(inputs[0].equals("dec"))) {
+					System.out.println("Invalid syntax for " + inputs[0]);
+				}
+				else if (!(inputs[0].equals("dec") && inputs.length == 1)) {
+					ts = -1;
+					for (short s = 0; s < Manifest.manifest1.amount; s++) {
+						if (Manifest.manifest1.sigs[s].equals(inputs[1] + inputs[2])) {
+							ts = s;
+						}
+					}
+					if (ts == -1) {
+						System.out.println("error: encoding not found");
+					}
+					else {
+						if (input.length() < 15) {
+							System.out.println("error: no text inputted for encoding");
+						}
+						else {
+							if (Manifest.manifest1.types[ts] == 1) {
+								System.out.println(Manifest.manifest1.fixeds[ts].ncode(tbool, input.substring(14)));
+							}
+							else {
+								if (Manifest.manifest1.useSwapPolicy[ts]) {
+									if (tbool) {
+										input2 = inputs[3].substring(8, 9);
+									}
+									else {
+										input2 = "haha random String variable don't mind me";
+										while ((!("0123456789abcdef".contains(input2))) || input2.length() != 1) {
+											System.out.print("Enter swapPolicy, from 0 to f, inclusive\r\n>");
+											input2 = inRead.readLine();
+										}
+									}
+									if (input2.equals("0")) {
+										System.out.println(Manifest.manifest1.bitTree0[ts].ncode(tbool, input.substring(14)));
+									}
+									else if (input2.equals("1")) {
+										System.out.println(Manifest.manifest1.bitTree1[ts].ncode(tbool, input.substring(14)));
+									}
+									else if (input2.equals("2")) {
+										System.out.println(Manifest.manifest1.bitTree2[ts].ncode(tbool, input.substring(14)));
+									}
+									else if (input2.equals("3")) {
+										System.out.println(Manifest.manifest1.bitTree3[ts].ncode(tbool, input.substring(14)));
+									}
+									else if (input2.equals("4")) {
+										System.out.println(Manifest.manifest1.bitTree4[ts].ncode(tbool, input.substring(14)));
+									}
+									else if (input2.equals("5")) {
+										System.out.println(Manifest.manifest1.bitTree5[ts].ncode(tbool, input.substring(14)));
+									}
+									else if (input2.equals("6")) {
+										System.out.println(Manifest.manifest1.bitTree6[ts].ncode(tbool, input.substring(14)));
+									}
+									else if (input2.equals("7")) {
+										System.out.println(Manifest.manifest1.bitTree7[ts].ncode(tbool, input.substring(14)));
+									}
+									else if (input2.equals("8")) {
+										System.out.println(Manifest.manifest1.bitTree8[ts].ncode(tbool, input.substring(14)));
+									}
+									else if (input2.equals("9")) {
+										System.out.println(Manifest.manifest1.bitTree9[ts].ncode(tbool, input.substring(14)));
+									}
+									else if (input2.equals("a")) {
+										System.out.println(Manifest.manifest1.bitTree10[ts].ncode(tbool, input.substring(14)));
+									}
+									else if (input2.equals("b")) {
+										System.out.println(Manifest.manifest1.bitTree11[ts].ncode(tbool, input.substring(14)));
+									}
+									else if (input2.equals("c")) {
+										System.out.println(Manifest.manifest1.bitTree12[ts].ncode(tbool, input.substring(14)));
+									}
+									else if (input2.equals("d")) {
+										System.out.println(Manifest.manifest1.bitTree13[ts].ncode(tbool, input.substring(14)));
+									}
+									else if (input2.equals("e")) {
+										System.out.println(Manifest.manifest1.bitTree14[ts].ncode(tbool, input.substring(14)));
+									}
+									else if (input2.equals("f")) {
+										System.out.println(Manifest.manifest1.bitTree15[ts].ncode(tbool, input.substring(14)));
+									}
+									else {
+										System.out.println("error: invalid data");
+									}
+								}
+								else {
+									System.out.println(Manifest.manifest1.bitTree0[ts].ncode(tbool, input.substring(14)));
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
