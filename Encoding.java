@@ -652,7 +652,7 @@ class CLI {
 				return;
 			}
 			else if (input.toLowerCase().equals("help")) {
-				System.out.println("commands:\r\nenc <pid> <vid> <text> - Encodes text\r\ndec <hex>  - Decodes hex\r\nhelp                   - Displays available commands\r\nencodings              - Displays availavle encodings\r\nquit                   - Closes the program");
+				System.out.println("commands:\r\nenc <pid> <vid> <text> - Encodes text\r\ndec <hex>              - Decodes hex\r\nhelp                   - Displays available commands\r\nencodings              - Displays availavle encodings\r\nquit                   - Closes the program");
 			}
 			else if (input.toLowerCase().equals("encodings")) {
 				for (short s = 0; s < Manifest.manifest1.amount; s++) {
