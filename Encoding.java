@@ -65,6 +65,9 @@ class Tree {
 						place++;
 						continue;
 					default:
+						System.out.println(arrayString);
+						System.out.println(place);
+						System.out.println(tc);
 						return null;
 				}
 			}
@@ -224,7 +227,7 @@ class BitTree {
 	public byte swapNum;
 	public char swapChar;
 	public BitTree(int pid, int vid, String chars, int swapPolicy, boolean upperReq, boolean lowerReq) {
-		//uses a String of supported characters and a swap policy, compatible with the Python code
+		//uses a String of supported characters and a swap policy, compatible with the Python code but must have at least 3 characters (including the replacement character)
 		if (!chars.contains("�")) {
 			System.out.println("critical error: specification does not include a replacement character");
 			base = null;
@@ -269,6 +272,7 @@ class BitTree {
 					list.insert(t, '"');
 				}
 			}
+			System.out.println(list);
 			String[] tss;
 			StringBuilder sb2;
 			while (list.toString().split("@").length > 2) {
@@ -288,12 +292,20 @@ class BitTree {
 				}
 				list = sb2;
 			}
+			System.out.println(list);
 			if (list.toString().split("@").length == 2) {
 				tss = list.toString().split("@");
-				list = new StringBuilder("[" + tss[0] + "," + tss[1] + "]");
+				if (tss[0].length() > 1) {
+					list = new StringBuilder("[" + tss[0] + "," + tss[1] + "]");
+				}
+				else {
+					list = new StringBuilder("[" + tss[0] + "," + tss[1] + "]");
+				}
 			}
+			System.out.println(list);
 			String stringArray = list.toString();
 			stringArray = stringArray.substring(1, stringArray.length() - 1);
+			System.out.println("oooo" + swapLayers(stringArray));
 			String ts = Tree.JSONToBitTreeString(swapLayers(stringArray));
 			ts = swapBottom(ts, chars, swapPolicy);
 			base = new Tree(ts, upperReq, lowerReq);
@@ -365,6 +377,9 @@ class BitTree {
 		return high;
 	}
 	private static final String swap(String input) {
+		if (depth(input) < 4) {
+			return input;
+		}
 		int ti = 0;
 		int depth;
 		ti = 0;
@@ -384,13 +399,20 @@ class BitTree {
 			}
 			ti++;
 		}
-		return input.substring(ti + 2, input.length()) + "," + input.substring(0, ti + 1);
+		System.out.println(input);
+		System.out.println(input.substring(ti + 2, input.length()));
+		if (input.substring(ti + 2, input.length()).length() > 1) {
+			return input.substring(ti + 2, input.length()) + "," + input.substring(0, ti + 1);
+		}
+		else {
+			return input.substring(ti + 2, input.length()) + "," + input.substring(0, ti + 1);
+		}
 	}
 	private static final String swapper(String input) {
 		int ti = 0;
 		int depth;
-		ti = 1;
-		depth = 1;
+		ti = 0;
+		depth = 0;
 		while (ti < input.length()) {
 			if (input.charAt(ti) == '[') {
 				depth++;
@@ -398,17 +420,31 @@ class BitTree {
 			if (input.charAt(ti) == ']') {
 				depth--;
 			}
-			if (depth < 1) {
+			if (depth == 0 && input.charAt(ti) == ',') {
+				ti--;
 				break;
 			}
 			ti++;
 		}
+		System.out.println(depth(input.substring(1, ti)));
 		if (depth(input.substring(1, ti)) > 4) {
-			input = swapper(input.substring(1, ti)) + ",[" + swap(input.substring(ti + 3, input.length() - 1)) + "]";
+			if (input.substring(ti + 3, input.length() - 1).length() == 1) {
+				input = swapper(input.substring(1, ti)) + ",\"" + swap(input.substring(ti + 3, input.length() - 1)) + "\"";
+			}
+			else {
+				input = swapper(input.substring(1, ti)) + ",[" + swap(input.substring(ti + 3, input.length() - 1)) + "]";
+			}
 		}
 		else {
-			input = "[" + swap(input.substring(1, ti)) + "],[" + swap(input.substring(ti + 3, input.length() - 1)) + "]";
+			System.out.println("hhhhhh" + input);
+			if (input.substring(ti + 3, input.length() - 1).length() == 1) {
+				input = "[" + swap(input.substring(1, ti)) + "],\"" + swap(input.substring(ti + 3, input.length() - 1)) + "\"";
+			}
+			else {
+				input = "[" + swap(input.substring(1, ti)) + "],[" + swap(input.substring(ti + 3, input.length() - 1)) + "]";
+			}
 		}
+		System.out.println("spr: " + input);
 		return "[" + swap(input) + "]";
 	}
 	private static final String swapLayers(String in) {
