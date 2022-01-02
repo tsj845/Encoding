@@ -65,9 +65,6 @@ class Tree {
 						place++;
 						continue;
 					default:
-						System.out.println(arrayString);
-						System.out.println(place);
-						System.out.println(tc);
 						return null;
 				}
 			}
@@ -272,7 +269,6 @@ class BitTree {
 					list.insert(t, '"');
 				}
 			}
-			System.out.println(list);
 			String[] tss;
 			StringBuilder sb2;
 			while (list.toString().split("@").length > 2) {
@@ -292,7 +288,6 @@ class BitTree {
 				}
 				list = sb2;
 			}
-			System.out.println(list);
 			if (list.toString().split("@").length == 2) {
 				tss = list.toString().split("@");
 				if (tss[0].length() > 1) {
@@ -302,10 +297,8 @@ class BitTree {
 					list = new StringBuilder("[" + tss[0] + "," + tss[1] + "]");
 				}
 			}
-			System.out.println(list);
 			String stringArray = list.toString();
 			stringArray = stringArray.substring(1, stringArray.length() - 1);
-			System.out.println("oooo" + swapLayers(stringArray));
 			String ts = Tree.JSONToBitTreeString(swapLayers(stringArray));
 			ts = swapBottom(ts, chars, swapPolicy);
 			base = new Tree(ts, upperReq, lowerReq);
@@ -399,8 +392,6 @@ class BitTree {
 			}
 			ti++;
 		}
-		System.out.println(input);
-		System.out.println(input.substring(ti + 2, input.length()));
 		if (input.substring(ti + 2, input.length()).length() > 1) {
 			return input.substring(ti + 2, input.length()) + "," + input.substring(0, ti + 1);
 		}
@@ -426,7 +417,6 @@ class BitTree {
 			}
 			ti++;
 		}
-		System.out.println(depth(input.substring(1, ti)));
 		if (depth(input.substring(1, ti)) > 4) {
 			if (input.substring(ti + 3, input.length() - 1).length() == 1) {
 				input = swapper(input.substring(1, ti)) + ",\"" + swap(input.substring(ti + 3, input.length() - 1)) + "\"";
@@ -436,7 +426,6 @@ class BitTree {
 			}
 		}
 		else {
-			System.out.println("hhhhhh" + input);
 			if (input.substring(ti + 3, input.length() - 1).length() == 1) {
 				input = "[" + swap(input.substring(1, ti)) + "],\"" + swap(input.substring(ti + 3, input.length() - 1)) + "\"";
 			}
@@ -444,7 +433,6 @@ class BitTree {
 				input = "[" + swap(input.substring(1, ti)) + "],[" + swap(input.substring(ti + 3, input.length() - 1)) + "]";
 			}
 		}
-		System.out.println("spr: " + input);
 		return "[" + swap(input) + "]";
 	}
 	private static final String swapLayers(String in) {
