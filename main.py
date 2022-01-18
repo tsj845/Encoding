@@ -123,7 +123,7 @@ class Encoder ():
             0xadfc : {
                 "versions" : [0x1498, 0xbc0e],
                 "data" : {
-                    0x1498 : {"tree":"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789;,.!? �","nib":2,"nibd":2},
+                    0x1498 : {"tree":"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �","nib":2,"nibd":2},
                     0xbc0e : {"tree":"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,.!? �\n\t\\\"'{}[];","nib":2,"nibd":2}
                 }
             },
