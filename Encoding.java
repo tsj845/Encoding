@@ -1,6 +1,8 @@
+package encoder;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+
 class CLI {
 	public static void main(String[] arg) throws Exception {
 		System.out.println("Starting CLI...");
