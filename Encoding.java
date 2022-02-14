@@ -30,7 +30,7 @@ class CLI {
 				return;
 			}
 			else if (input.toLowerCase().equals("help")) {
-				System.out.println("commands:\r\nenc <text>                  - Encodes text\r\ndec <hex>                               - Decodes hex\r\nconfig spew|(<field> get|(set <value>)) - Get or set configuration fields, valid fields are vid (String), pid (String), and nib (0 to f inclusive)\r\nencodings                               - Displays available encodings\r\nhelp                                    - Displays available commands\r\nquit                                    - Closes the program");
+				System.out.println("commands:\r\nenc <text>                              - Encodes text\r\ndec <hex>                               - Decodes hex\r\nconfig spew|(<field> get|(set <value>)) - Get or set configuration fields, valid fields are vid (String), pid (String), and nib (0 to f inclusive)\r\nencodings                               - Displays available encodings\r\nhelp                                    - Displays available commands\r\nquit                                    - Closes the program");
 			}
 			else if (input.toLowerCase().equals("encodings")) {
 				for (short s = 0; s < Manifest.manifest1.amount; s++) {
