@@ -2,6 +2,267 @@ package encoder;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+
+class CLI {
+	public static void main(String[] arg) throws Exception {
+		System.out.println("Starting CLI...");
+		CL();
+		System.out.println("Closing program...");
+		System.exit(0);
+	}
+	static void CL() throws Exception {
+		String cswapPolicy = "2";
+		String cpid = "adfc";
+		String cvid = "1498";
+		boolean tbool;
+		short ts;
+		String tstr;
+		String input;
+		String input2;
+		String[] inputs;
+		BufferedReader inRead = new BufferedReader(new InputStreamReader(System.in));
+		while (true) {
+			System.out.print(">");
+			input = inRead.readLine();
+			inputs = input.split(" ");
+			if (input.toLowerCase().equals("quit")) {
+				System.out.println("Closing CLI...");
+				return;
+			}
+			else if (input.toLowerCase().equals("help")) {
+				System.out.println("commands:\r\nenc <pid> <vid> <text>                  - Encodes text\r\ndec <hex>                               - Decodes hex\r\nconfig spew|(<field> get|(set <value>)) - Get or set configuration fields, valid fields are vid (String), pid (String), and nib (0 to f inclusive)\r\nencodings                               - Displays available encodings\r\nhelp                                    - Displays available commands\r\nquit                                    - Closes the program");
+			}
+			else if (input.toLowerCase().equals("encodings")) {
+				for (short s = 0; s < Manifest.manifest1.amount; s++) {
+					System.out.print((new StringBuilder(Manifest.manifest1.sigs[s])).insert(4, "-") + ", ");
+					if (Manifest.manifest1.types[s] == 0) {
+						System.out.print("bit tree, ");
+						if (Manifest.manifest1.useSwapPolicy[s]) {
+							System.out.println("useSwapPolicy = true");
+						}
+						else {
+							System.out.println("useSwapPolicy = false");
+						}
+					}
+					else {
+						System.out.println("fixed-length");
+					}
+				}
+			}
+			else if (inputs.length > 0 && ((inputs[0].toLowerCase().equals("enc")) || (inputs[0].toLowerCase().equals("dec")))) {
+				inputs[0] = inputs[0].toLowerCase();
+				tbool = inputs[0].equals("dec");
+				if (tbool) {
+					if (inputs.length > 1 && inputs[1].length() > 1 && inputs[1].substring(0, 2).equals("0x")) {
+						inputs[1] = inputs[1].substring(2);
+					}
+					if (inputs.length > 1 && inputs[1].length() > 10) {
+						inputs = new String[]{"dec", inputs[1].substring(0,4), inputs[1].substring(4, 8), inputs[1]};
+						tstr = "";
+						for (String s : inputs) {
+							tstr += (" " + s);
+						}
+						tstr = tstr.substring(1);
+						input = tstr;
+					}
+					else {
+						System.out.println("error: header and padding data not completely-present\7");
+						inputs = new String[]{"dec"};
+					}
+				}
+				else if (inputs.length > 1) {
+					inputs = new String[]{"enc", cpid, cvid, input.substring(4)};
+					input = "enc " + cpid + " " + cvid + " " + input.substring(4);
+				}
+				if (inputs.length < 3 && !(inputs[0].equals("dec"))) {
+					System.out.println("Invalid command syntax for " + inputs[0] + ", use, \"help\" to view available commands the their syntaxes\7");
+				}
+				else if (!(inputs[0].equals("dec") && inputs.length == 1)) {
+					ts = -1;
+					for (short s = 0; s < Manifest.manifest1.amount; s++) {
+						if (Manifest.manifest1.sigs[s].equals(inputs[1] + inputs[2])) {
+							ts = s;
+						}
+					}
+					if (ts == -1) {
+						System.out.println("error: encoding not found: " + inputs[1] + "-" + inputs[2] + "\7");
+					}
+					else {
+						if (input.length() < 15) {
+							System.out.println("error: no text inputted for encoding\7");
+						}
+						else {
+							if (Manifest.manifest1.types[ts] == 1) {
+								System.out.println(Manifest.manifest1.fixeds[ts].ncode(tbool, input.substring(14)));
+							}
+							else {
+								if (Manifest.manifest1.useSwapPolicy[ts]) {
+									if (tbool) {
+										input2 = inputs[3].substring(8, 9);
+									}
+									else {
+										input2 = cswapPolicy;
+									}
+									switch (input2) {
+										case ("0"):
+											System.out.println(Manifest.manifest1.bitTree0[ts].ncode(tbool, inputs[3]));
+											break;
+										case ("1"):
+											System.out.println(Manifest.manifest1.bitTree1[ts].ncode(tbool, inputs[3]));
+											break;
+										case ("2"):
+											System.out.println(Manifest.manifest1.bitTree2[ts].ncode(tbool, inputs[3]));
+											break;
+										case ("3"):
+											System.out.println(Manifest.manifest1.bitTree3[ts].ncode(tbool, inputs[3]));
+											break;
+										case ("4"):
+											System.out.println(Manifest.manifest1.bitTree4[ts].ncode(tbool, inputs[3]));
+											break;
+										case ("5"):
+											System.out.println(Manifest.manifest1.bitTree5[ts].ncode(tbool, inputs[3]));
+											break;
+										case ("6"):
+											System.out.println(Manifest.manifest1.bitTree6[ts].ncode(tbool, inputs[3]));
+											break;
+										case ("7"):
+											System.out.println(Manifest.manifest1.bitTree7[ts].ncode(tbool, inputs[3]));
+											break;
+										case ("8"):
+											System.out.println(Manifest.manifest1.bitTree8[ts].ncode(tbool, inputs[3]));
+											break;
+										case ("9"):
+											System.out.println(Manifest.manifest1.bitTree9[ts].ncode(tbool, inputs[3]));
+											break;
+										case ("a"):
+											System.out.println(Manifest.manifest1.bitTree10[ts].ncode(tbool, inputs[3]));
+											break;
+										case ("b"):
+											System.out.println(Manifest.manifest1.bitTree11[ts].ncode(tbool, inputs[3]));
+											break;
+										case ("c"):
+											System.out.println(Manifest.manifest1.bitTree12[ts].ncode(tbool, inputs[3]));
+											break;
+										case ("d"):
+											System.out.println(Manifest.manifest1.bitTree13[ts].ncode(tbool, inputs[3]));
+											break;
+										case ("e"):
+											System.out.println(Manifest.manifest1.bitTree14[ts].ncode(tbool, inputs[3]));
+											break;
+										case ("f"):
+											System.out.println(Manifest.manifest1.bitTree15[ts].ncode(tbool, inputs[3]));
+											break;
+										default:
+											System.out.println("error: invalid data\7");
+									}
+								}
+								else {
+									System.out.println(Manifest.manifest1.bitTree0[ts].ncode(tbool, input.substring(14)));
+								}
+							}
+						}
+					}
+				}
+			}
+			else if (input.length() > 10 && input.substring(0, 11).toLowerCase().equals("config spew") && inputs[1].toLowerCase().equals("spew")) {
+				System.out.println("Current configuration:\r\npid: 0x" + cpid + "\r\nvid: 0x" + cvid + "\r\nnib: 0x" + cswapPolicy);
+			}
+			else if (inputs.length > 0 && inputs[0].toLowerCase().equals("config")) {
+				if (inputs.length < 3) {
+					System.out.println("Invalid command syntax for config, use, \"help\" to view available commands the their syntaxes\7");
+				}
+				else {
+					inputs[1] = inputs[1].toLowerCase();
+					inputs[2] = inputs[2].toLowerCase();
+					if (!(inputs[2].equals("get") || inputs[2].equals("set"))) {
+						System.out.println("error: invalid argument\7");
+					}
+					else {
+						if (inputs[2].equals("get")) {
+							switch (inputs[1]) {
+								case ("pid"):
+									System.out.println("0x" + cpid);
+									break;
+								case ("vid"):
+									System.out.println("0x" + cvid);
+									break;
+								case ("nib"):
+									System.out.println("0x" + cswapPolicy);
+									break;
+								default:
+									System.out.println("error: invalid field\7");
+							}
+						}
+						else if (inputs[2].equals("set")) {
+							if (inputs.length < 4) {
+								System.out.println("error: no dersired value specified\7");
+							}
+							else {
+								inputs[3] = inputs[3].toLowerCase();
+								if (inputs[3].length() > 1 && inputs[3].substring(0, 2).equals("0x")) {
+									inputs[3] = inputs[3].substring(2);
+								}
+								switch (inputs[1]) {
+									case ("pid"):
+										if (inputs[3].length() != 4) {
+											System.out.println("error: invalid value: pid must be a 4-hexit value, inputted in hexidecimal\7");
+										}
+										else {
+											tbool = true;
+											for (byte n = 0; n < inputs[3].length(); n++) {
+												if (!"0123456789abcdef".contains(inputs[3].substring(n, n+1))) {
+													tbool = false;
+													System.out.println("error: invalid value: pid must be a 4-hexit value, inputted in hexidecimal\7");
+													break;
+												}
+											}
+											if (tbool) {
+												cpid = inputs[3];
+											}
+										}
+										break;
+									case ("vid"):
+										if (inputs[3].length() != 4) {
+											System.out.println("error: invalid value: vid must be a 4-hexit value, inputted in hexidecimal\7");
+										}
+										else {
+											tbool = true;
+											for (byte n = 0; n < inputs[3].length(); n++) {
+												if (!"0123456789abcdef".contains(inputs[3].substring(n, n+1))) {
+													tbool = false;
+													System.out.println("error: invalid value: vid must be a 4-hexit value, inputted in hexidecimal\7");
+													break;
+												}
+											}
+											if (tbool) {
+												cvid = inputs[3];
+											}
+										}
+										break;
+									case ("nib"):
+										if ((!("0123456789abcdef".contains(inputs[3]))) || inputs[3].length() != 1) {
+											System.out.println("error: invalid value: nib must be an integer from 0 to f, inclusive\7");
+										}
+										else {
+											cswapPolicy = inputs[3];
+										}
+										break;
+									default:
+										System.out.println("error: invalid field\7");
+								}
+							}
+						}
+					}
+				}
+			}
+			else {
+				System.out.println("Invalid command, use, \"help\" to view available commands the their syntaxes\7");
+			}
+		}
+	}
+}
+
+
 class Tree {
 	public final String charTree;
 	public final boolean upperReq;
@@ -642,263 +903,5 @@ class Manifest {
 		this.bitTree13 = bitTree13;
 		this.bitTree14 = bitTree14;
 		this.bitTree15 = bitTree15;
-	}
-}
-class CLI {
-	public static void main(String[] arg) throws Exception {
-		System.out.println("Starting CLI...");
-		CL();
-		System.out.println("Closing program...");
-		System.exit(0);
-	}
-	static void CL() throws Exception {
-		String cswapPolicy = "2";
-		String cpid = "adfc";
-		String cvid = "1498";
-		boolean tbool;
-		short ts;
-		String tstr;
-		String input;
-		String input2;
-		String[] inputs;
-		BufferedReader inRead = new BufferedReader(new InputStreamReader(System.in));
-		while (true) {
-			System.out.print(">");
-			input = inRead.readLine();
-			inputs = input.split(" ");
-			if (input.toLowerCase().equals("quit")) {
-				System.out.println("Closing CLI...");
-				return;
-			}
-			else if (input.toLowerCase().equals("help")) {
-				System.out.println("commands:\r\nenc <pid> <vid> <text>                  - Encodes text\r\ndec <hex>                               - Decodes hex\r\nconfig spew|(<field> get|(set <value>)) - Get or set configuration fields, valid fields are vid (String), pid (String), and nib (0 to f inclusive)\r\nencodings                               - Displays available encodings\r\nhelp                                    - Displays available commands\r\nquit                                    - Closes the program");
-			}
-			else if (input.toLowerCase().equals("encodings")) {
-				for (short s = 0; s < Manifest.manifest1.amount; s++) {
-					System.out.print((new StringBuilder(Manifest.manifest1.sigs[s])).insert(4, "-") + ", ");
-					if (Manifest.manifest1.types[s] == 0) {
-						System.out.print("bit tree, ");
-						if (Manifest.manifest1.useSwapPolicy[s]) {
-							System.out.println("useSwapPolicy = true");
-						}
-						else {
-							System.out.println("useSwapPolicy = false");
-						}
-					}
-					else {
-						System.out.println("fixed-length");
-					}
-				}
-			}
-			else if (inputs.length > 0 && ((inputs[0].toLowerCase().equals("enc")) || (inputs[0].toLowerCase().equals("dec")))) {
-				inputs[0] = inputs[0].toLowerCase();
-				tbool = inputs[0].equals("dec");
-				if (tbool) {
-					if (inputs.length > 1 && inputs[1].length() > 1 && inputs[1].substring(0, 2).equals("0x")) {
-						inputs[1] = inputs[1].substring(2);
-					}
-					if (inputs.length > 1 && inputs[1].length() > 10) {
-						inputs = new String[]{"dec", inputs[1].substring(0,4), inputs[1].substring(4, 8), inputs[1]};
-						tstr = "";
-						for (String s : inputs) {
-							tstr += (" " + s);
-						}
-						tstr = tstr.substring(1);
-						input = tstr;
-					}
-					else {
-						System.out.println("error: header and padding data not completely-present\7");
-						inputs = new String[]{"dec"};
-					}
-				}
-				else if (inputs.length > 1) {
-					inputs = new String[]{"enc", cpid, cvid, input.substring(4)};
-					input = "enc " + cpid + " " + cvid + " " + input.substring(4);
-				}
-				if (inputs.length < 3 && !(inputs[0].equals("dec"))) {
-					System.out.println("Invalid command syntax for " + inputs[0] + ", use, \"help\" to view available commands the their syntaxes\7");
-				}
-				else if (!(inputs[0].equals("dec") && inputs.length == 1)) {
-					ts = -1;
-					for (short s = 0; s < Manifest.manifest1.amount; s++) {
-						if (Manifest.manifest1.sigs[s].equals(inputs[1] + inputs[2])) {
-							ts = s;
-						}
-					}
-					if (ts == -1) {
-						System.out.println("error: encoding not found: " + inputs[1] + "-" + inputs[2] + "\7");
-					}
-					else {
-						if (input.length() < 15) {
-							System.out.println("error: no text inputted for encoding\7");
-						}
-						else {
-							if (Manifest.manifest1.types[ts] == 1) {
-								System.out.println(Manifest.manifest1.fixeds[ts].ncode(tbool, input.substring(14)));
-							}
-							else {
-								if (Manifest.manifest1.useSwapPolicy[ts]) {
-									if (tbool) {
-										input2 = inputs[3].substring(8, 9);
-									}
-									else {
-										input2 = cswapPolicy;
-									}
-									switch (input2) {
-										case ("0"):
-											System.out.println(Manifest.manifest1.bitTree0[ts].ncode(tbool, inputs[3]));
-											break;
-										case ("1"):
-											System.out.println(Manifest.manifest1.bitTree1[ts].ncode(tbool, inputs[3]));
-											break;
-										case ("2"):
-											System.out.println(Manifest.manifest1.bitTree2[ts].ncode(tbool, inputs[3]));
-											break;
-										case ("3"):
-											System.out.println(Manifest.manifest1.bitTree3[ts].ncode(tbool, inputs[3]));
-											break;
-										case ("4"):
-											System.out.println(Manifest.manifest1.bitTree4[ts].ncode(tbool, inputs[3]));
-											break;
-										case ("5"):
-											System.out.println(Manifest.manifest1.bitTree5[ts].ncode(tbool, inputs[3]));
-											break;
-										case ("6"):
-											System.out.println(Manifest.manifest1.bitTree6[ts].ncode(tbool, inputs[3]));
-											break;
-										case ("7"):
-											System.out.println(Manifest.manifest1.bitTree7[ts].ncode(tbool, inputs[3]));
-											break;
-										case ("8"):
-											System.out.println(Manifest.manifest1.bitTree8[ts].ncode(tbool, inputs[3]));
-											break;
-										case ("9"):
-											System.out.println(Manifest.manifest1.bitTree9[ts].ncode(tbool, inputs[3]));
-											break;
-										case ("a"):
-											System.out.println(Manifest.manifest1.bitTree10[ts].ncode(tbool, inputs[3]));
-											break;
-										case ("b"):
-											System.out.println(Manifest.manifest1.bitTree11[ts].ncode(tbool, inputs[3]));
-											break;
-										case ("c"):
-											System.out.println(Manifest.manifest1.bitTree12[ts].ncode(tbool, inputs[3]));
-											break;
-										case ("d"):
-											System.out.println(Manifest.manifest1.bitTree13[ts].ncode(tbool, inputs[3]));
-											break;
-										case ("e"):
-											System.out.println(Manifest.manifest1.bitTree14[ts].ncode(tbool, inputs[3]));
-											break;
-										case ("f"):
-											System.out.println(Manifest.manifest1.bitTree15[ts].ncode(tbool, inputs[3]));
-											break;
-										default:
-											System.out.println("error: invalid data\7");
-									}
-								}
-								else {
-									System.out.println(Manifest.manifest1.bitTree0[ts].ncode(tbool, input.substring(14)));
-								}
-							}
-						}
-					}
-				}
-			}
-			else if (input.length() > 10 && input.substring(0, 11).toLowerCase().equals("config spew") && inputs[1].toLowerCase().equals("spew")) {
-				System.out.println("Current configuration:\r\npid: 0x" + cpid + "\r\nvid: 0x" + cvid + "\r\nnib: 0x" + cswapPolicy);
-			}
-			else if (inputs.length > 0 && inputs[0].toLowerCase().equals("config")) {
-				if (inputs.length < 3) {
-					System.out.println("Invalid command syntax for config, use, \"help\" to view available commands the their syntaxes\7");
-				}
-				else {
-					inputs[1] = inputs[1].toLowerCase();
-					inputs[2] = inputs[2].toLowerCase();
-					if (!(inputs[2].equals("get") || inputs[2].equals("set"))) {
-						System.out.println("error: invalid argument\7");
-					}
-					else {
-						if (inputs[2].equals("get")) {
-							switch (inputs[1]) {
-								case ("pid"):
-									System.out.println("0x" + cpid);
-									break;
-								case ("vid"):
-									System.out.println("0x" + cvid);
-									break;
-								case ("nib"):
-									System.out.println("0x" + cswapPolicy);
-									break;
-								default:
-									System.out.println("error: invalid field\7");
-							}
-						}
-						else if (inputs[2].equals("set")) {
-							if (inputs.length < 4) {
-								System.out.println("error: no dersired value specified\7");
-							}
-							else {
-								inputs[3] = inputs[3].toLowerCase();
-								if (inputs[3].length() > 1 && inputs[3].substring(0, 2).equals("0x")) {
-									inputs[3] = inputs[3].substring(2);
-								}
-								switch (inputs[1]) {
-									case ("pid"):
-										if (inputs[3].length() != 4) {
-											System.out.println("error: invalid value: pid must be a 4-hexit value, inputted in hexidecimal\7");
-										}
-										else {
-											tbool = true;
-											for (byte n = 0; n < inputs[3].length(); n++) {
-												if (!"0123456789abcdef".contains(inputs[3].substring(n, n+1))) {
-													tbool = false;
-													System.out.println("error: invalid value: pid must be a 4-hexit value, inputted in hexidecimal\7");
-													break;
-												}
-											}
-											if (tbool) {
-												cpid = inputs[3];
-											}
-										}
-										break;
-									case ("vid"):
-										if (inputs[3].length() != 4) {
-											System.out.println("error: invalid value: vid must be a 4-hexit value, inputted in hexidecimal\7");
-										}
-										else {
-											tbool = true;
-											for (byte n = 0; n < inputs[3].length(); n++) {
-												if (!"0123456789abcdef".contains(inputs[3].substring(n, n+1))) {
-													tbool = false;
-													System.out.println("error: invalid value: vid must be a 4-hexit value, inputted in hexidecimal\7");
-													break;
-												}
-											}
-											if (tbool) {
-												cvid = inputs[3];
-											}
-										}
-										break;
-									case ("nib"):
-										if ((!("0123456789abcdef".contains(inputs[3]))) || inputs[3].length() != 1) {
-											System.out.println("error: invalid value: nib must be an integer from 0 to f, inclusive\7");
-										}
-										else {
-											cswapPolicy = inputs[3];
-										}
-										break;
-									default:
-										System.out.println("error: invalid field\7");
-								}
-							}
-						}
-					}
-				}
-			}
-			else {
-				System.out.println("Invalid command, use, \"help\" to view available commands the their syntaxes\7");
-			}
-		}
 	}
 }
