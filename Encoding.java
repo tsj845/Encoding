@@ -2,7 +2,7 @@ package encoder;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-
+import java.util.Arrays;
 class CLI {
 	public static void main(String[] arg) throws Exception {
 		System.out.println("Starting CLI...");
@@ -500,6 +500,66 @@ class BitTree {
 	public boolean useSwapPolicy;
 	public byte swapNum;
 	public char swapChar;
+	public BitTree(int pid, int vid, String chars, boolean upperReq, boolean lowerReq, int swapPolicy) {
+		//This organizes characters in a similar way to the path that a binary search to the character would take, this skips swapLayers
+		if (!chars.contains("�")) {
+			System.out.println("critical error: specification does not include a replacement character");
+			base = null;
+			sig = null;
+		}
+		else if (swapPolicy < 0 || swapPolicy > 15) {
+			System.out.println("critical error: invalid swapPolicy value");
+			base = null;
+			sig = null;
+		}
+		else if (chars.contains("@")) {
+			System.out.println("critical error: illegal character: '@'");
+			base = null;
+			sig = null;
+		}
+		else if ((pid > 65535 || pid < 0) || (vid > 65535 || vid < 0)) {
+			System.out.println("critical error: pid and / or vid not representable in unsigned 16 bits");
+			base = null;
+			sig = null;
+		}
+		else {
+			swapNum = (byte) swapPolicy;
+			swapChar = Integer.toHexString(swapPolicy).charAt(0);
+			useSwapPolicy = true;
+			this.sig = Tree.getSig(pid, vid);
+			if (pid > 32767) {
+				pid -= 65536;
+			}
+			if (vid > 32767) {
+				vid -= 65536;
+			}
+			this.pid = (short) pid;
+			this.vid = (short) vid;
+			int nc;
+			int result;
+			int view;
+			char[] at = new char[1 << (32 - Integer.numberOfLeadingZeros(chars.length() - 1))];
+			Arrays.fill(at, '@');
+			for (int n = 0; n < chars.length(); n++) {
+			    nc = n;
+			    result = 1;
+			    view = chars.length();
+			    while (view > 1) {
+			        if (nc < ((view / 2) + (view % 2))) {
+			            result *= 2;
+			            view = (view / 2) + (view % 2);
+			        }
+			        else {
+			            result = (result * 2) + 1;
+			            nc -= (view / 2) + (view % 2);
+			            view -= (view / 2) + (view % 2);
+			        }
+			    }
+			    at[result] = chars.charAt(n);
+			}
+			base = new Tree(swapBottom(new String(at), chars, swapPolicy), upperReq, lowerReq);
+		}
+	}
 	public BitTree(int pid, int vid, String chars, int swapPolicy, boolean upperReq, boolean lowerReq) {
 		//uses a String of supported characters and a swap policy, compatible with the Python code but must have at least 3 characters (including the replacement character)
 		if (!chars.contains("�")) {
@@ -577,8 +637,7 @@ class BitTree {
 			String stringArray = list.toString();
 			stringArray = stringArray.substring(1, stringArray.length() - 1);
 			String ts = Tree.JSONToBitTreeString(swapLayers(stringArray));
-			ts = swapBottom(ts, chars, swapPolicy);
-			base = new Tree(ts, upperReq, lowerReq);
+			base = new Tree(swapBottom(ts, chars, swapPolicy), upperReq, lowerReq);
 		}
 	}
 	public BitTree(int pid, int vid, String charTree, boolean upperReq, boolean lowerReq) {
